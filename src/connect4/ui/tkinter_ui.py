@@ -83,12 +83,11 @@ class Connect4TkApp:
         self.log = ScrolledText(self.panel_game, width=50, height=10, state="disabled", font=("Consolas", 10))
 
         # Layout
-        self.panel_controls.grid(row=0, column=0, sticky="nsw", padx=(10, 5), pady=10)
-        self.panel_game.grid(row=0, column=1, sticky="nsew", padx=(5, 10), pady=10)
+        self.status_label.grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=(10, 2))
+        self.panel_controls.grid(row=1, column=0, sticky="nsw", padx=(10, 5), pady=(0, 10))
+        self.panel_game.grid(row=1, column=1, sticky="nsew", padx=(5, 10), pady=(0, 10))
         self.root.columnconfigure(1, weight=1)
-        self.root.rowconfigure(0, weight=1)
-
-        self.status_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 6))
+        self.root.rowconfigure(1, weight=1)
         self.btn_frame.grid(row=1, column=0, sticky="w")
         self.canvas.grid(row=2, column=0, sticky="w", pady=(10, 0))
         self.log.grid(row=4, column=0, sticky="nsew", pady=(4, 0))
