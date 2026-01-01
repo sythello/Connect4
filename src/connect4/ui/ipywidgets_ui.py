@@ -1,11 +1,12 @@
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Optional
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 import ipywidgets as widgets
 from IPython.display import display, clear_output
 
-from connect4.core import Connect4Game
+from connect4.core import Connect4Config, Connect4Game, EMPTY, MoveResult, P1, P2
 from connect4.ai import Connect4AIPlayer, RandomAI
 
 class Connect4WidgetApp:
@@ -23,8 +24,8 @@ class Connect4WidgetApp:
     - Subclass `Connect4AIPlayer` and wire it into `_make_player` if desired.
     """
 
-    def __init__(self) -> None:
-        self.game = Connect4Game()
+    def __init__(self, config: Optional[Connect4Config] = None) -> None:
+        self.game = Connect4Game(config=config)
 
         # Player controllers: None means human; otherwise an AI instance
         self.p1_ai: Optional[Connect4AIPlayer] = None
@@ -57,7 +58,7 @@ class Connect4WidgetApp:
 
         # Column buttons
         self.col_buttons: List[widgets.Button] = []
-        for c in range(COLS):
+        for c in range(self.game.cols):
             b = widgets.Button(description=f"▼ {c+1}", layout=widgets.Layout(width="55px"))
             b.on_click(lambda _, cc=c: self._on_human_move(cc))
             self.col_buttons.append(b)
@@ -141,15 +142,15 @@ class Connect4WidgetApp:
         with self.out_board:
             clear_output(wait=True)
             fig, ax = plt.subplots(figsize=(7, 6))
-            ax.set_xlim(-0.5, COLS - 0.5)
-            ax.set_ylim(ROWS - 0.5, -0.5)
+            ax.set_xlim(-0.5, self.game.cols - 0.5)
+            ax.set_ylim(self.game.rows - 0.5, -0.5)
             ax.set_aspect("equal")
-            ax.set_xticks(range(COLS))
-            ax.set_yticks(range(ROWS))
+            ax.set_xticks(range(self.game.cols))
+            ax.set_yticks(range(self.game.rows))
             ax.grid(True, linewidth=1)
 
-            for r in range(ROWS):
-                for c in range(COLS):
+            for r in range(self.game.rows):
+                for c in range(self.game.cols):
                     v = board[r, c]
                     if v == EMPTY:
                         face, edge = "white", "gray"
@@ -166,8 +167,8 @@ class Connect4WidgetApp:
                 ring = plt.Circle((lc, lr), 0.46, fill=False, edgecolor="dodgerblue", linewidth=3)
                 ax.add_patch(ring)
 
-            ax.set_xticklabels([str(i + 1) for i in range(COLS)])
-            ax.set_yticklabels([str(i + 1) for i in range(ROWS)])
+            ax.set_xticklabels([str(i + 1) for i in range(self.game.cols)])
+            ax.set_yticklabels([str(i + 1) for i in range(self.game.rows)])
             ax.set_title("Connect4 Board")
             plt.show()
 

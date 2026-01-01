@@ -1,20 +1,23 @@
 from __future__ import annotations
 
 # import asyncio
-import random
 from dataclasses import dataclass
-from typing import List, Optional, Sequence, Tuple
-import time
+from typing import List, Optional, Tuple
 
-import numpy as np
-
-
-ROWS = 6
-COLS = 7
 
 EMPTY = 0
 P1 = 1
 P2 = 2
+
+
+@dataclass(frozen=True)
+class Connect4Config:
+    rows: int = 6
+    cols: int = 7
+
+    def __post_init__(self) -> None:
+        if self.rows <= 0 or self.cols <= 0:
+            raise ValueError("Connect4 board dimensions must be positive.")
 
 @dataclass
 class MoveResult:
@@ -26,36 +29,44 @@ class MoveResult:
 
 
 class Connect4Game:
-    """Headless Connect4 engine (UI-agnostic)."""
+    """Headless Connect4 engine (UI-agnostic).
 
-    def __init__(self) -> None:
-        self.board = [[EMPTY for _ in range(COLS)] for _ in range(ROWS)]
+    Parameters
+    ----------
+    config:
+        Optional :class:`Connect4Config` to control board dimensions. If omitted,
+        the default 6x7 board is used.
+    """
+
+    def __init__(self, config: Optional[Connect4Config] = None) -> None:
+        self.config = config or Connect4Config()
+        self.board = [[EMPTY for _ in range(self.cols)] for _ in range(self.rows)]
         self.current_player = P1
         self.last_move: Optional[Tuple[int, int]] = None
         self.winner = 0
         self.is_draw = False
 
     def reset(self, first_player: int = P1) -> None:
-        self.board = [[EMPTY for _ in range(COLS)] for _ in range(ROWS)]
+        self.board = [[EMPTY for _ in range(self.cols)] for _ in range(self.rows)]
         self.current_player = first_player
         self.last_move = None
         self.winner = 0
         self.is_draw = False
 
     def valid_moves(self) -> List[int]:
-        return [c for c in range(COLS) if self.board[0][c] == EMPTY]
+        return [c for c in range(self.cols) if self.board[0][c] == EMPTY]
 
     def drop_piece(self, col: int) -> MoveResult:
         if self.winner != 0 or self.is_draw:
             return MoveResult(placed=False)
 
-        if col < 0 or col >= COLS:
+        if col < 0 or col >= self.cols:
             return MoveResult(placed=False)
 
         if self.board[0][col] != EMPTY:
             return MoveResult(placed=False)
 
-        r = ROWS - 1
+        r = self.rows - 1
         while r >= 0 and self.board[r][col] != EMPTY:
             r -= 1
         if r < 0:
@@ -92,8 +103,16 @@ class Connect4Game:
     def _count_dir(self, r: int, c: int, dr: int, dc: int, player: int) -> int:
         rr, cc = r, c
         count = 0
-        while 0 <= rr < ROWS and 0 <= cc < COLS and self.board[rr][cc] == player:
+        while 0 <= rr < self.rows and 0 <= cc < self.cols and self.board[rr][cc] == player:
             count += 1
             rr += dr
             cc += dc
         return count
+
+    @property
+    def rows(self) -> int:
+        return self.config.rows
+
+    @property
+    def cols(self) -> int:
+        return self.config.cols
