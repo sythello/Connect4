@@ -7,7 +7,7 @@ import ipywidgets as widgets
 from IPython.display import display, clear_output
 
 from connect4.core import Connect4Config, Connect4Game, EMPTY, MoveResult, P1, P2
-from connect4.ai import Connect4AIPlayer, RandomAI
+from connect4.ai import Connect4AIPlayer, MinimaxAI, RandomAI
 
 class Connect4WidgetApp:
     """Interactive Connect4 app for Jupyter/Colab using ipywidgets + matplotlib.
@@ -39,12 +39,12 @@ class Connect4WidgetApp:
         self.status = widgets.HTML(value="<b>Welcome to Connect4</b>")
 
         self.dd_p1 = widgets.Dropdown(
-            options=["Human", "AI: RandomAI"],
+            options=["Human", "AI: RandomAI", "AI: MinimaxAI"],
             value="Human",
             description="Player 1:"
         )
         self.dd_p2 = widgets.Dropdown(
-            options=["Human", "AI: RandomAI"],
+            options=["Human", "AI: RandomAI", "AI: MinimaxAI"],
             value="Human",
             description="Player 2:"
         )
@@ -178,6 +178,8 @@ class Connect4WidgetApp:
             return None
         if selection == "AI: RandomAI":
             return RandomAI()
+        if selection == "AI: MinimaxAI":
+            return MinimaxAI()
         raise ValueError(f"Unknown player type: {selection}")
 
     def _on_start_new_game(self, _btn) -> None:
@@ -231,8 +233,8 @@ class Connect4WidgetApp:
             self._log(f"Illegal move: column {col+1}")
             return
 
-        curr_player_id = self.game.current_player
-        self._log(f"Human (Player {curr_player_id}) played column {col+1}")
+        mover_id = self.game.board[res.row][res.col]
+        self._log(f"Human (Player {mover_id}) played column {col+1}")
         self._after_move_hooks(res)
         self._draw_board()
         self._sync_controls()
@@ -286,8 +288,8 @@ class Connect4WidgetApp:
             self._log(f"[AI ERROR] {ai.name} attempted illegal move: {col}")
             return
 
-        curr_player_id = self.game.current_player
-        self._log(f"{ai.name} (Player {curr_player_id}) played column {col+1}")
+        mover_id = self.game.board[res.row][res.col]
+        self._log(f"{ai.name} (Player {mover_id}) played column {col+1}")
         self._after_move_hooks(res)
         self._draw_board()
         self._sync_controls()

@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
-from connect4.ai import Connect4AIPlayer, RandomAI
+from connect4.ai import Connect4AIPlayer, MinimaxAI, RandomAI
 from connect4.core import Connect4Config, Connect4Game, EMPTY, MoveResult, P1, P2
 
 
@@ -54,7 +54,7 @@ class Connect4TkApp:
 
         self.dd_p1_var = tk.StringVar(value="Human")
         self.dd_p2_var = tk.StringVar(value="Human")
-        options = ["Human", "AI: RandomAI"]
+        options = ["Human", "AI: RandomAI", "AI: MinimaxAI"]
         self.dd_p1 = ttk.OptionMenu(self.panel_controls, self.dd_p1_var, self.dd_p1_var.get(), *options)
         self.dd_p2 = ttk.OptionMenu(self.panel_controls, self.dd_p2_var, self.dd_p2_var.get(), *options)
         self.dd_p1.grid(row=1, column=1, sticky="w")
@@ -175,6 +175,8 @@ class Connect4TkApp:
             return None
         if selection == "AI: RandomAI":
             return RandomAI()
+        if selection == "AI: MinimaxAI":
+            return MinimaxAI()
         raise ValueError(f"Unknown player type: {selection}")
 
     def _cancel_ai_job(self) -> None:
@@ -232,8 +234,8 @@ class Connect4TkApp:
             self._log(f"Illegal move: column {col+1}")
             return
 
-        curr_player_id = self.game.current_player
-        self._log(f"Human (Player {curr_player_id}) played column {col+1}")
+        mover_id = self.game.board[res.row][res.col]
+        self._log(f"Human (Player {mover_id}) played column {col+1}")
         self._after_move_hooks(res)
         self._draw_board()
         self._sync_controls()
@@ -285,8 +287,8 @@ class Connect4TkApp:
             self._log(f"[AI ERROR] {ai.name} attempted illegal move: {col}")
             return
 
-        curr_player_id = self.game.current_player
-        self._log(f"{ai.name} (Player {curr_player_id}) played column {col+1}")
+        mover_id = self.game.board[res.row][res.col]
+        self._log(f"{ai.name} (Player {mover_id}) played column {col+1}")
         self._after_move_hooks(res)
         self._draw_board()
         self._sync_controls()

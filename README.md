@@ -5,7 +5,7 @@ Connect4 game engine with two interactive frontends:
 - A local desktop UI built with Tkinter
 - A notebook UI built with `ipywidgets` and `matplotlib`
 
-The repository also includes a simple AI interface and a sample `RandomAI`.
+The repository also includes a simple AI interface, a sample `RandomAI`, and a stronger depth-limited `MinimaxAI`.
 
 ## Installation
 
@@ -71,13 +71,16 @@ class MyAI(Connect4AIPlayer):
         return valid_moves[0]
 ```
 
-The repository currently includes one example implementation: [`RandomAI`](src/connect4/ai/random_ai.py).
+The repository currently includes two built-in implementations:
+
+- [`RandomAI`](src/connect4/ai/random_ai.py)
+- [`MinimaxAI`](src/connect4/ai/minimax_ai.py)
 
 ## Notes
 
 - There is currently no packaged console entry point in `pyproject.toml`.
 - The top-level package file [`src/connect4/__init__.py`](src/connect4/__init__.py) is empty, so imports should come from subpackages like `connect4.core`, `connect4.ai`, or `connect4.ui...`.
-- The desktop UI currently offers `Human` and `AI: RandomAI` as the built-in player options.
+- The desktop and notebook UIs currently offer `Human`, `AI: RandomAI`, and `AI: MinimaxAI` as built-in player options.
 
 ## Current File Structure
 
@@ -93,6 +96,7 @@ Connect4/
         ├── ai/
         │   ├── __init__.py
         │   ├── ai_base.py
+        │   ├── minimax_ai.py
         │   └── random_ai.py
         ├── core/
         │   ├── __init__.py
@@ -109,6 +113,7 @@ Connect4/
 - [`scripts/run_game_tkint.py`](scripts/run_game_tkint.py): desktop app launcher
 - [`src/connect4/core/game_core.py`](src/connect4/core/game_core.py): headless game engine and move rules
 - [`src/connect4/ai/ai_base.py`](src/connect4/ai/ai_base.py): AI base class contract
+- [`src/connect4/ai/minimax_ai.py`](src/connect4/ai/minimax_ai.py): depth-limited minimax AI with alpha-beta pruning
 - [`src/connect4/ai/random_ai.py`](src/connect4/ai/random_ai.py): sample random-move AI
 - [`src/connect4/ui/tkinter_ui.py`](src/connect4/ui/tkinter_ui.py): desktop Tkinter frontend
 - [`src/connect4/ui/ipywidgets_ui.py`](src/connect4/ui/ipywidgets_ui.py): notebook frontend

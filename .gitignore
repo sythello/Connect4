@@ -1,2 +1,25 @@
-*.egg-info*
-*__pycache__*
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+
+# Packaging artifacts
+*.egg-info/
+build/
+dist/
+
+# Local environments and package caches
+.conda-env/
+.conda-pkgs/
+.venv/
+venv/
+env/
+ENV/
+
+# Tooling and notebook state
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS-generated files
+.DS_Store
