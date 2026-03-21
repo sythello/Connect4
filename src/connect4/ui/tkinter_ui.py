@@ -63,20 +63,34 @@ class Connect4TkApp:
         self.btn_start = ttk.Button(self.panel_controls, text="Start New Game", command=self._on_start_new_game)
         self.btn_start.grid(row=3, column=0, columnspan=2, pady=(10, 0), sticky="ew")
 
+        # Shared board sizing keeps the move buttons aligned with the board columns.
+        self.cell_size = 70
+        self.cell_padding = 8
+        self.board_width = self.game.cols * self.cell_size
+        self.board_height = self.game.rows * self.cell_size
+        self.board_bg = "#1d4ed8"
+        self.board_grid = "#93c5fd"
+
         # Column buttons
         self.col_buttons = []
-        self.btn_frame = ttk.Frame(self.panel_game)
+        self.btn_frame = ttk.Frame(self.panel_game, width=self.board_width, height=36)
+        self.btn_frame.grid_propagate(False)
+        self.btn_frame.rowconfigure(0, weight=1)
         for c in range(self.game.cols):
-            btn = ttk.Button(self.btn_frame, text=f"▼ {c+1}", width=4, command=lambda cc=c: self._on_human_move(cc))
-            btn.grid(row=0, column=c, padx=2, pady=2)
+            self.btn_frame.columnconfigure(c, weight=1, uniform="board-col")
+            btn = ttk.Button(self.btn_frame, text=f"▼ {c+1}", command=lambda cc=c: self._on_human_move(cc))
+            btn.grid(row=0, column=c, padx=0, pady=2, sticky="nsew")
             self.col_buttons.append(btn)
 
         # Board canvas
-        self.cell_size = 70
-        self.cell_padding = 8
-        canvas_width = self.game.cols * self.cell_size
-        canvas_height = self.game.rows * self.cell_size
-        self.canvas = tk.Canvas(self.panel_game, width=canvas_width, height=canvas_height, bg="white", highlightthickness=1, highlightbackground="#ccc")
+        self.canvas = tk.Canvas(
+            self.panel_game,
+            width=self.board_width,
+            height=self.board_height,
+            bg=self.board_bg,
+            bd=0,
+            highlightthickness=0,
+        )
 
         # Log area
         ttk.Label(self.panel_game, text="Log", font=("Arial", 11, "bold")).grid(row=3, column=0, sticky="w", pady=(10, 0))
@@ -143,15 +157,30 @@ class Connect4TkApp:
         self.canvas.delete("all")
         for r in range(self.game.rows):
             for c in range(self.game.cols):
-                x0 = c * self.cell_size + self.cell_padding
-                y0 = r * self.cell_size + self.cell_padding
-                x1 = (c + 1) * self.cell_size - self.cell_padding
-                y1 = (r + 1) * self.cell_size - self.cell_padding
+                cell_x0 = c * self.cell_size
+                cell_y0 = r * self.cell_size
+                cell_x1 = (c + 1) * self.cell_size
+                cell_y1 = (r + 1) * self.cell_size
+
+                self.canvas.create_rectangle(
+                    cell_x0,
+                    cell_y0,
+                    cell_x1,
+                    cell_y1,
+                    fill=self.board_bg,
+                    outline=self.board_grid,
+                    width=1,
+                )
+
+                x0 = cell_x0 + self.cell_padding
+                y0 = cell_y0 + self.cell_padding
+                x1 = cell_x1 - self.cell_padding
+                y1 = cell_y1 - self.cell_padding
 
                 v = self.game.board[r][c]
                 if v == EMPTY:
                     fill = "white"
-                    outline = "#999"
+                    outline = "#dbeafe"
                 elif v == P1:
                     fill = "#e63946"
                     outline = "#8b1d2c"

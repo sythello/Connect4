@@ -35,6 +35,12 @@ class Connect4WidgetApp:
         self._turn_token = 0
         # self._ai_task: Optional[asyncio.Task] = None
 
+        # Shared board sizing keeps the move buttons aligned with board columns.
+        self.cell_size = 70
+        self.board_width_px = self.game.cols * self.cell_size
+        self.board_height_px = self.game.rows * self.cell_size
+        self.board_dpi = 100
+
         # ---- UI widgets ----
         self.status = widgets.HTML(value="<b>Welcome to Connect4</b>")
 
@@ -59,14 +65,24 @@ class Connect4WidgetApp:
         # Column buttons
         self.col_buttons: List[widgets.Button] = []
         for c in range(self.game.cols):
-            b = widgets.Button(description=f"▼ {c+1}", layout=widgets.Layout(width="55px"))
+            b = widgets.Button(
+                description=f"▼ {c+1}",
+                layout=widgets.Layout(width="100%", height="38px", min_width="0"),
+            )
             b.on_click(lambda _, cc=c: self._on_human_move(cc))
             self.col_buttons.append(b)
 
-        self.row_buttons = widgets.HBox(self.col_buttons)
+        self.row_buttons = widgets.GridBox(
+            self.col_buttons,
+            layout=widgets.Layout(
+                grid_template_columns=f"repeat({self.game.cols}, {self.cell_size}px)",
+                gap="0px",
+                width=f"{self.board_width_px}px",
+            ),
+        )
 
         # Output areas
-        self.out_board = widgets.Output()
+        self.out_board = widgets.Output(layout=widgets.Layout(width=f"{self.board_width_px}px"))
         self.out_log = widgets.Output(layout=widgets.Layout(max_height="180px", overflow="auto"))
 
         self.panel_new_game = widgets.VBox(
@@ -141,13 +157,27 @@ class Connect4WidgetApp:
 
         with self.out_board:
             clear_output(wait=True)
-            fig, ax = plt.subplots(figsize=(7, 6))
-            ax.set_xlim(-0.5, self.game.cols - 0.5)
-            ax.set_ylim(self.game.rows - 0.5, -0.5)
+            fig, ax = plt.subplots(
+                figsize=(
+                    self.board_width_px / self.board_dpi,
+                    self.board_height_px / self.board_dpi,
+                ),
+                dpi=self.board_dpi,
+            )
+            fig.subplots_adjust(left=0, right=1, bottom=0, top=1)
+
+            ax.set_xlim(0, self.game.cols)
+            ax.set_ylim(self.game.rows, 0)
             ax.set_aspect("equal")
-            ax.set_xticks(range(self.game.cols))
-            ax.set_yticks(range(self.game.rows))
-            ax.grid(True, linewidth=1)
+            ax.set_facecolor("#1d4ed8")
+            ax.set_xticks(np.arange(self.game.cols + 1), minor=True)
+            ax.set_yticks(np.arange(self.game.rows + 1), minor=True)
+            ax.grid(which="minor", color="#93c5fd", linewidth=1)
+            ax.tick_params(which="both", bottom=False, left=False, labelbottom=False, labelleft=False)
+            ax.set_xticks([])
+            ax.set_yticks([])
+            for spine in ax.spines.values():
+                spine.set_visible(False)
 
             for r in range(self.game.rows):
                 for c in range(self.game.cols):
@@ -159,18 +189,16 @@ class Connect4WidgetApp:
                     else:
                         face, edge = "gold", "darkgoldenrod"
 
-                    circle = plt.Circle((c, r), 0.40, facecolor=face, edgecolor=edge, linewidth=2)
+                    circle = plt.Circle((c + 0.5, r + 0.5), 0.38, facecolor=face, edgecolor=edge, linewidth=2)
                     ax.add_patch(circle)
 
             if self.game.last_move is not None:
                 lr, lc = self.game.last_move
-                ring = plt.Circle((lc, lr), 0.46, fill=False, edgecolor="dodgerblue", linewidth=3)
+                ring = plt.Circle((lc + 0.5, lr + 0.5), 0.44, fill=False, edgecolor="dodgerblue", linewidth=3)
                 ax.add_patch(ring)
 
-            ax.set_xticklabels([str(i + 1) for i in range(self.game.cols)])
-            ax.set_yticklabels([str(i + 1) for i in range(self.game.rows)])
-            ax.set_title("Connect4 Board")
             plt.show()
+            plt.close(fig)
 
     # ---------- new game ----------
     def _make_player(self, selection: str) -> Optional[Connect4AIPlayer]:
