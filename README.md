@@ -29,6 +29,13 @@ python scripts/run_game_tkint.py
 
 This launches the local desktop game window using [`Connect4TkApp`](src/connect4/ui/tkinter_ui.py).
 
+The desktop app now uses a two-step flow:
+
+- `Game Setup` mode for choosing Player 1 and Player 2 as either `Human` or a configured AI version
+- `Playing` mode for the board, move log, result banner, plus top-right `Restart` and `Back` actions
+
+The supported desktop AI options are loaded from [`src/connect4/ui/ai_options.json`](src/connect4/ui/ai_options.json).
+
 ### 2. Run the notebook widget app
 
 Use this inside Jupyter Notebook, JupyterLab, or a similar IPython environment:
@@ -105,7 +112,8 @@ python scripts/evaluate_ai_strength.py full random-v1 minimax-d2-v1 --no-save
 
 - There is currently no packaged console entry point in `pyproject.toml`.
 - The top-level package file [`src/connect4/__init__.py`](src/connect4/__init__.py) is empty, so imports should come from subpackages like `connect4.core`, `connect4.ai`, or `connect4.ui...`.
-- The desktop and notebook UIs currently offer `Human`, `AI: RandomAI`, and `AI: MinimaxAI` as built-in player options.
+- The desktop Tkinter UI loads its player list from [`src/connect4/ui/ai_options.json`](src/connect4/ui/ai_options.json), which currently ships with `human`, `random-v1`, `minimax-d2-v1`, and `minimax-d4-v1`.
+- The notebook `ipywidgets` UI still uses its built-in `Human`, `AI: RandomAI`, and `AI: MinimaxAI` dropdown options.
 - The evaluation ladder treats each AI version as a separate entrant ID. If you change an AI materially, register a new entrant ID instead of reusing an old one.
 
 ## Current File Structure
@@ -143,3 +151,4 @@ Connect4/
 - [`src/connect4/ai/random_ai.py`](src/connect4/ai/random_ai.py): sample random-move AI
 - [`src/connect4/ui/tkinter_ui.py`](src/connect4/ui/tkinter_ui.py): desktop Tkinter frontend
 - [`src/connect4/ui/ipywidgets_ui.py`](src/connect4/ui/ipywidgets_ui.py): notebook frontend
+- [`src/connect4/ui/ai_options.json`](src/connect4/ui/ai_options.json): JSON config for Tkinter player options

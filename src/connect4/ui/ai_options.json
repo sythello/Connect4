@@ -1,0 +1,32 @@
+[
+  {
+    "id": "human",
+    "label": "Human",
+    "kind": "human"
+  },
+  {
+    "id": "random-v1",
+    "label": "RandomAI v1",
+    "kind": "ai",
+    "factory": "RandomAI",
+    "params": {}
+  },
+  {
+    "id": "minimax-d2-v1",
+    "label": "MinimaxAI depth 2 v1",
+    "kind": "ai",
+    "factory": "MinimaxAI",
+    "params": {
+      "max_depth": 2
+    }
+  },
+  {
+    "id": "minimax-d4-v1",
+    "label": "MinimaxAI depth 4 v1",
+    "kind": "ai",
+    "factory": "MinimaxAI",
+    "params": {
+      "max_depth": 4
+    }
+  }
+]
