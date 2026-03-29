@@ -1,0 +1,63 @@
+{
+  "anchor_ids": [
+    "random-v1",
+    "minimax-d2-v1",
+    "minimax-d4-v1"
+  ],
+  "entries": {
+    "minimax-d2-v1": {
+      "active": true,
+      "display_name": "MinimaxAI depth 2",
+      "draws": 0,
+      "family": "MinimaxAI",
+      "forfeit_losses": 0,
+      "games": 20,
+      "is_anchor": true,
+      "last_played_at": "2026-03-29T02:37:38+00:00",
+      "losses": 10,
+      "metadata": {
+        "max_depth": 2
+      },
+      "rating": 1491.416545334983,
+      "version": "v1",
+      "wins": 10
+    },
+    "minimax-d4-v1": {
+      "active": true,
+      "display_name": "MinimaxAI depth 4",
+      "draws": 0,
+      "family": "MinimaxAI",
+      "forfeit_losses": 0,
+      "games": 20,
+      "is_anchor": true,
+      "last_played_at": "2026-03-29T02:37:38+00:00",
+      "losses": 0,
+      "metadata": {
+        "max_depth": 4
+      },
+      "rating": 1699.6231124057376,
+      "version": "v1",
+      "wins": 20
+    },
+    "random-v1": {
+      "active": true,
+      "display_name": "RandomAI",
+      "draws": 0,
+      "family": "RandomAI",
+      "forfeit_losses": 0,
+      "games": 20,
+      "is_anchor": true,
+      "last_played_at": "2026-03-29T02:37:37+00:00",
+      "losses": 20,
+      "metadata": {},
+      "rating": 1308.9603422592793,
+      "version": "v1",
+      "wins": 0
+    }
+  },
+  "initial_rating": 1500.0,
+  "k_factor": 32.0,
+  "provisional_games": 12,
+  "schema_version": 1,
+  "updated_at": "2026-03-29T02:37:38+00:00"
+}

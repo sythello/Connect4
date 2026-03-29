@@ -76,11 +76,37 @@ The repository currently includes two built-in implementations:
 - [`RandomAI`](src/connect4/ai/random_ai.py)
 - [`MinimaxAI`](src/connect4/ai/minimax_ai.py)
 
+### 5. Evaluate AI strength with the anchored ELO ladder
+
+List the currently registered entrants:
+
+```bash
+python scripts/evaluate_ai_strength.py list
+```
+
+Calibrate a new entrant into the canonical ladder:
+
+```bash
+python scripts/evaluate_ai_strength.py calibration random-v1 --games-per-pair 2 --seed 5
+```
+
+This writes ratings to `artifacts/elo_ratings.json` by default. New entrants are rated by playing against:
+
+- the fixed anchor set,
+- any already-rated active entrants in the saved ladder.
+
+Run a tournament among already-rated entrants without saving:
+
+```bash
+python scripts/evaluate_ai_strength.py full random-v1 minimax-d2-v1 --no-save
+```
+
 ## Notes
 
 - There is currently no packaged console entry point in `pyproject.toml`.
 - The top-level package file [`src/connect4/__init__.py`](src/connect4/__init__.py) is empty, so imports should come from subpackages like `connect4.core`, `connect4.ai`, or `connect4.ui...`.
 - The desktop and notebook UIs currently offer `Human`, `AI: RandomAI`, and `AI: MinimaxAI` as built-in player options.
+- The evaluation ladder treats each AI version as a separate entrant ID. If you change an AI materially, register a new entrant ID instead of reusing an old one.
 
 ## Current File Structure
 
